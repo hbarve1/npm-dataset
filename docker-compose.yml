@@ -1,0 +1,87 @@
+# @format
+
+version: "3.3"
+
+services:
+  # redis:
+  #   image: redis:6.2.6
+  #   restart: always
+  #   ports:
+  #     - "6379:6379"
+  #   expose:
+  #     - 6379
+  #   volumes:
+  #     - ./data-redis:/var/lib/redis
+
+  # postgres:
+  #   image: postgres:14.0
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #   logging:
+  #     options:
+  #       max-size: 10m
+  #       max-file: "3"
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - ./data-postgres:/var/lib/postgresql/data
+
+  # postgres_gui:
+  #   image: dpage/pgadmin4:6
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: postgres@postgres.com
+  #     PGADMIN_DEFAULT_PASSWORD: postgres
+  #   ports:
+  # - "5433:80"
+
+  neo4j:
+    image: neo4j:${NEO4J_IMAGE_VERSION}
+    restart: always
+    environment:
+      - NEO4J_AUTH=${NEO4J_USERNAME}/${NEO4J_PASSWORD}
+    ports:
+      - "${NEO4J_PORT_1}:7474"
+      - "${NEO4J_PORT_2}:7687"
+    volumes:
+      - ./data/neo4j:/data
+
+  # >> This is the docker-compose file for Dgraph.
+  dgraph_zero:
+    image: dgraph/dgraph:latest
+    volumes:
+      - ./data/dgraph:/dgraph
+    ports:
+      - 5080:5080
+      - 6080:6080
+    restart: on-failure
+    command: dgraph zero --my=dgraph_zero:5080
+  dgraph_alpha:
+    image: dgraph/dgraph:latest
+    volumes:
+      - ./data/dgraph:/dgraph
+    ports:
+      - 8080:8080
+      - 9080:9080
+    restart: on-failure
+    command: dgraph alpha --my=dgraph_alpha:7080 --zero=dgraph_zero:5080 --security whitelist=${DGRAPH_WHITELIST}
+  dgraph_ratel:
+    image: dgraph/ratel:latest
+    ports:
+      - 8000:8000
+
+  # dgraph-standalone:
+  #   image: dgraph/standalone:latest
+  #   volumes:
+  #     - ./data/dgraph:/dgraph
+  #   ports:
+  #     - 5089:5080
+  #     - 6089:6080
+  #     - 8089:8080
+  #     - 9089:9080
+  #     - 8009:8000
+  #   command: dgraph zero & dgraph alpha
+
+  # <<This is the docker-compose file for Dgraph.
