@@ -50,7 +50,7 @@ services:
 
   # >> This is the docker-compose file for Dgraph.
   dgraph_zero:
-    image: dgraph/dgraph:latest
+    image: dgraph/dgraph:v22.0.2
     volumes:
       - ./data/dgraph:/dgraph
     ports:
@@ -59,7 +59,7 @@ services:
     restart: on-failure
     command: dgraph zero --my=dgraph_zero:5080
   dgraph_alpha:
-    image: dgraph/dgraph:latest
+    image: dgraph/dgraph:v22.0.2
     volumes:
       - ./data/dgraph:/dgraph
     ports:
@@ -68,12 +68,12 @@ services:
     restart: on-failure
     command: dgraph alpha --my=dgraph_alpha:7080 --zero=dgraph_zero:5080 --security whitelist=${DGRAPH_WHITELIST}
   dgraph_ratel:
-    image: dgraph/ratel:latest
+    image: dgraph/ratel:v22.0.2
     ports:
       - 8000:8000
 
   # dgraph-standalone:
-  #   image: dgraph/standalone:latest
+  #   image: dgraph/standalone:v22.0.2
   #   volumes:
   #     - ./data/dgraph:/dgraph
   #   ports:
