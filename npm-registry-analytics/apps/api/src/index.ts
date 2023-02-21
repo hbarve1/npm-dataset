@@ -18,11 +18,15 @@ async function writeNpmPackageNamesToDatabaseSub(packageNames, i) {
     // console.log(
     //   'parsePackageJson fn calling ===================================='
     // );
-    const parsedPkgJson = parsePackageJson(pkgJson);
+    // const parsedPkgJson = parsePackageJson(pkgJson);
     // console.dir(parsedPkgJson, { depth: null });
 
     try {
-      const res = await insertJson(dgraphClient, parsedPkgJson);
+      const res = await insertJson(dgraphClient, {
+        _id: packageNames[i],
+        _table: 'npmPackage',
+        jsonData: JSON.stringify(pkgJson),
+      });
       // console.dir(res, { depth: null });
       console.log('Success', i, packageNames[i]);
       // await wait(70);
@@ -45,7 +49,7 @@ async function writeNpmPackageNamesToDatabase() {
     folderPath: ['..', '..', '..', '..', 'datasets'],
   });
 
-  const index = 16076;
+  const index = 298000;
   // const index = packageNames.findIndex(
   //   (packageName) => packageName === "@wind-webcli/core",
   // );
@@ -55,9 +59,9 @@ async function writeNpmPackageNamesToDatabase() {
   for (let i = index; i < packageNames.length; i++) {
     writeNpmPackageNamesToDatabaseSub(packageNames, i);
 
-    if (loopCounter === 100) {
-      console.log('Waiting for 5 seconds');
-      await wait(5000);
+    if (loopCounter === 50) {
+      console.log('Waiting for 3 seconds');
+      await wait(3000);
       loopCounter = 0;
     }
 
@@ -65,4 +69,4 @@ async function writeNpmPackageNamesToDatabase() {
   }
 }
 
-writeNpmPackageNamesToDatabase();
+// writeNpmPackageNamesToDatabase();

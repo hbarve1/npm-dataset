@@ -2,3 +2,4 @@
 node_modules
 neo4j
 data
+.DS_Store
